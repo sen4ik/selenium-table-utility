@@ -2,8 +2,11 @@ package org.sen4ik.stu;
 
 import lombok.extern.log4j.Log4j2;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.sen4ik.utils.ArrUtil;
 import org.sen4ik.utils.selenium.base.SeleniumUtils;
 import org.sen4ik.utils.selenium.utils.DriverUtil;
@@ -52,8 +55,16 @@ public class TableUtility {
         return table;
     }
 
+    public static boolean isTablePresent() {
+        boolean isPresent = DriverUtil.isElementPresent(tableLocator);
+        log.info("present: " + isPresent);
+        return isPresent;
+    }
+
     public static boolean isTableVisible() {
-        return DriverUtil.isElementPresent(tableLocator);
+        boolean isVisible = DriverUtil.isElementVisible(tableLocator);
+        log.info("visible: " + isVisible);
+        return isVisible;
     }
 
     /**
@@ -134,7 +145,9 @@ public class TableUtility {
     }
 
     public static int getColumnCount() {
-        return getTable().findElements(By.xpath(rowsXpath + "[1]/td[1]")).size();
+        int columnCount = getTable().findElements(By.xpath(headerCellXpath)).size();
+        log.info("column count: " + columnCount);
+        return columnCount;
     }
 
     /**
@@ -247,7 +260,9 @@ public class TableUtility {
     }
 
     public static boolean isValuePresentInColumn(String headerName, String value){
-        return getColumnText(headerName).contains(value);
+        boolean isValuePresent = getColumnText(headerName).contains(value);
+        log.info("present: " + isValuePresent);
+        return isValuePresent;
     }
 
     /**
@@ -258,25 +273,77 @@ public class TableUtility {
         return DriverUtil.isElementPresent(getTable(), By.xpath(".//tbody"));
     }
 
-    public static void waitForNumberOfRowsToChange(){
+    private static boolean waitForChange(Supplier supplier, int timeoutInSeconds){
+        int initialCount = (int) supplier.get();
+        WebDriverWait wait = new WebDriverWait(getDriver(), timeoutInSeconds);
+        String msg = "count didn't change within specified timeout of " + timeoutInSeconds + " seconds";
+        try {
+            return wait.until(new ExpectedCondition<Boolean>() {
+                public Boolean apply(WebDriver driver) {
+                    int currentCount = (int) supplier.get();
+                    if (currentCount != initialCount) {
+                        log.info("count changed from " + initialCount + " to expected count of " + currentCount);
+                        return true;
+                    }
+                    else {
+                        // log.info(msg);
+                        return false;
+                    }
+                }
+            });
+        }
+        catch (TimeoutException e){
+            log.info(msg);
+            return false;
+        }
+    }
+
+    private static boolean waitToEqual(Supplier supplier, int expectedCount, int timeoutInSeconds){
+        WebDriverWait wait = new WebDriverWait(getDriver(), timeoutInSeconds);
+        String msg = "count doesn't equal to expected " + expectedCount + " within specified " +
+                "timeout of " + timeoutInSeconds + " seconds";
+        try {
+            return wait.until(new ExpectedCondition<Boolean>() {
+                public Boolean apply(WebDriver driver) {
+                    int count = (int) supplier.get();
+                    if (count == expectedCount) {
+                        log.info("count equals to expected " + expectedCount);
+                        return true;
+                    }
+                    else {
+                        // log.info(msg);
+                        return false;
+                    }
+                }
+            });
+        }
+        catch (TimeoutException e){
+            log.info(msg);
+            return false;
+        }
+    }
+
+    public static boolean waitForNumberOfRowsToEqual(int expectedRowCount, int timeoutInSeconds){
+        return waitToEqual(TableUtility::getRowCount, expectedRowCount, timeoutInSeconds);
+    }
+
+    public static boolean waitForNumberOfRowsToChange(int timeoutInSeconds){
+        return waitForChange(TableUtility::getRowCount, timeoutInSeconds);
+    }
+
+    public static boolean waitForNumberOfColumnsToEqual(int expectedColumnCount, int timeoutInSeconds){
+        return waitToEqual(TableUtility::getColumnCount, expectedColumnCount, timeoutInSeconds);
+    }
+
+    public static boolean waitForNumberOfColumnsToChange(int timeoutInSeconds){
+        return waitForChange(TableUtility::getColumnCount, timeoutInSeconds);
+    }
+
+    public static void areColumnValuesUnique(String columnName){
 
     }
 
-    public static void waitForNumberOfRowsToEqual(int expectedNumOfRows){
-
-
-
-    }
-
-    public static void waitForColumnValuesToBeUnique(){
-
-    }
-
-    public static void doesColumnHaveUniqueValues(){
-
-    }
-
-    public static void waitForNumberOfColumnsToChange(){
+    public static void waitForColumnValuesToBeUnique(String expectedUniqueValue, int timeoutInSeconds){
 
     }
 

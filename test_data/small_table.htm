@@ -5,8 +5,8 @@
 <script src="sc.js"></script>
 </head>
 <body>
-<button id="removeFirst" onclick="removeFirstColumn()">Remove The First Column</button>
-<button id="removeLast" onclick="removeLastColumn()">Remove The Last Column</button>
+<button id="removeFirstColumn" onclick="removeFirstColumn()">Remove The First Column</button>
+<button id="removeLastColumn" onclick="removeLastColumn()">Remove The Last Column</button>
 <button id="removeRow" onclick="removeFirstRow()">Remove The First Row</button>
 <button id="removeHeader" onclick="removeHeader()">Remove The Header</button>
 <!-- dataset is taken from https://ardf.wr.usgs.gov/index.php -->
@@ -4013,5 +4013,15 @@
 </tr>
 </tbody>
 </table>
+
+<table id="secondaryTable" style="display: none;">
+    <thead>
+        <tr><th title="Field #1">Site</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>test</td></tr>
+    </tbody>
+</table>
+
 </body>
 </html>

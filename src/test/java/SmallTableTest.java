@@ -23,6 +23,7 @@ public class SmallTableTest {
 
     public static String smallTableHtmlFile = "./test_data/small_table.htm";
     public static final By testTable = By.id("mainTable");
+    public static final By secondaryTable = By.id("secondaryTable");
 
     private static final String firstCellText = "Chandalar River Headwaters";
     private List<String> expectedHeaders = Arrays.asList("Site", "Commodities_main", "Quad_250", "Quad_63360",
@@ -32,6 +33,9 @@ public class SmallTableTest {
             "Last_report_date", "MRDS_no", "Age", "Deposit_model_number", "Alteration", "Production_notes",
             "Reserves", "Primary_reference", "State", "District", "Host_rock", "Host_rock_age", "Assoc_ign_rock",
             "Ign_rock_age", "References", "Reporter_affiliation", "Quadrangle");
+
+    private static int initialRowCount = 99;
+    private static int initialColumnCount = 38;
 
     @BeforeClass
     public void bc(){
@@ -60,13 +64,24 @@ public class SmallTableTest {
     }
 
     @Test
+    public void isTablePresent(){
+        assertTrue(TableUtility.isTablePresent());
+    }
+
+    @Test
+    public void isTablePresent_negative(){
+        TableUtility.setTableLocator(By.xpath("//table[@id='nonexisting']"));
+        assertFalse(TableUtility.isTablePresent());
+    }
+
+    @Test
     public void isTableVisible(){
         assertTrue(TableUtility.isTableVisible());
     }
 
     @Test
     public void isTableVisible_negative(){
-        TableUtility.setTableLocator(By.xpath("//table[@id='nonexisting']"));
+        TableUtility.setTableLocator(secondaryTable);
         assertFalse(TableUtility.isTableVisible());
     }
 
@@ -235,7 +250,7 @@ public class SmallTableTest {
 
     @Test
     public void getRows(){
-        assertTrue(TableUtility.getRows().size() == 99);
+        assertTrue(TableUtility.getRows().size() == initialRowCount);
     }
 
     @Test
@@ -253,7 +268,7 @@ public class SmallTableTest {
 
     @Test
     public void getRowCount(){
-        assertTrue(TableUtility.getRowCount() == 99);
+        assertTrue(TableUtility.getRowCount() == initialRowCount);
     }
 
     @Test
@@ -306,7 +321,7 @@ public class SmallTableTest {
 
     @Test
     public void isValuePresentInColumn_negative(){
-        assertFalse(TableUtility.isValuePresentInColumn(99, "Prospect"));
+        assertFalse(TableUtility.isValuePresentInColumn(initialRowCount, "Prospect"));
     }
 
     @Test
@@ -319,7 +334,64 @@ public class SmallTableTest {
         assertTrue(TableUtility.isTbodyPresent());
     }
 
+    @Test
+    public void waitForNumberOfRowsToEqual(){
+        assertTrue(TableUtility.getRowCount() == initialRowCount);
+        clickRemoveRowButton();
+        assertTrue(TableUtility.waitForNumberOfRowsToEqual(initialRowCount-1, 7));
+    }
+
+    @Test
+    public void waitForNumberOfRowsToEqual_negative(){
+        assertFalse(TableUtility.waitForNumberOfRowsToEqual(999, 2));
+    }
+
+    @Test
+    public void waitForNumberOfRowsToChange(){
+        assertTrue(TableUtility.getRowCount() == initialRowCount);
+        clickRemoveRowButton();
+        assertTrue(TableUtility.waitForNumberOfRowsToChange(7));
+    }
+
+    @Test
+    public void waitForNumberOfRowsToChange_negative(){
+        assertFalse(TableUtility.waitForNumberOfRowsToChange(2));
+    }
+
+    @Test
+    public void waitForNumberOfColumnsToEqual(){
+        assertTrue(TableUtility.getColumnCount() == initialColumnCount);
+        clickRemoveFirstColumnButton();
+        assertTrue(TableUtility.waitForNumberOfColumnsToEqual(initialColumnCount-1, 7));
+    }
+
+    @Test
+    public void waitForNumberOfColumnsToEqual_negative(){
+        assertFalse(TableUtility.waitForNumberOfColumnsToEqual(9999, 2));
+    }
+
+    @Test
+    public void waitForNumberOfColumnsToChange(){
+        assertTrue(TableUtility.getColumnCount() == initialColumnCount);
+        clickRemoveFirstColumnButton();
+        assertTrue(TableUtility.waitForNumberOfColumnsToChange(7));
+    }
+
+    @Test
+    public void waitForNumberOfColumnsToChange_negative(){
+        assertFalse(TableUtility.waitForNumberOfColumnsToChange(2));
+    }
 
 
+
+
+
+    private void clickRemoveRowButton(){
+        DriverManager.getDriver().findElement(By.id("removeRow")).click();
+    }
+
+    private void clickRemoveFirstColumnButton(){
+        DriverManager.getDriver().findElement(By.id("removeFirstColumn")).click();
+    }
 
 }

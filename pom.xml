@@ -62,7 +62,7 @@
         <dependency>
             <groupId>com.github.sen4ik</groupId>
             <artifactId>selenium-utils</artifactId>
-            <version>f2213b5</version>
+            <version>dc59745</version>
         </dependency>
     </dependencies>
 
