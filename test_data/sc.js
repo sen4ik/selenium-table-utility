@@ -40,3 +40,11 @@ async function removeFirstRow() {
         tbody.removeChild(row);
     }
 }
+
+async function removeHeader() {
+    let table = document.getElementById(tableId);
+    let thead = table.getElementsByTagName("THEAD")[0];
+    if (table.rows.length > 1){
+        table.removeChild(thead);
+    }
+}

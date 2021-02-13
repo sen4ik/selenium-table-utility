@@ -22,7 +22,6 @@ import static org.testng.AssertJUnit.*;
 public class SmallTableTest {
 
     public static String smallTableHtmlFile = "./test_data/small_table.htm";
-    public static String smallNoHeaderTableHtmlFile = "./test_data/small_table_no_headers.htm";
     public static final By testTable = By.id("mainTable");
 
     private static final String firstCellText = "Chandalar River Headwaters";
@@ -37,7 +36,6 @@ public class SmallTableTest {
     @BeforeClass
     public void bc(){
         try {
-            this.smallNoHeaderTableHtmlFile = FileUtil.getFilePath(smallNoHeaderTableHtmlFile);
             this.smallTableHtmlFile = FileUtil.getFilePath(smallTableHtmlFile);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -79,7 +77,7 @@ public class SmallTableTest {
 
     @Test
     public void isHeaderRowPresent_negative(){
-        DriverManager.getDriver().get("file:///" + smallNoHeaderTableHtmlFile);
+        DriverManager.getDriver().findElement(By.id("removeHeader")).click();
         assertFalse(TableUtility.isHeaderRowPresent());
     }
 
@@ -90,7 +88,7 @@ public class SmallTableTest {
 
     @Test
     public void getHeaders_negative(){
-        DriverManager.getDriver().get("file:///" + smallNoHeaderTableHtmlFile);
+        DriverManager.getDriver().findElement(By.id("removeHeader")).click();
         assertTrue(TableUtility.getHeaders().size() == 0);
     }
 
