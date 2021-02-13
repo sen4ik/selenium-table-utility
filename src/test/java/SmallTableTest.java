@@ -53,7 +53,7 @@ public class SmallTableTest {
         DriverManager.createInstance();
         TableUtility.init(DriverManager::getDriver, testTable);
         DriverManager.getDriver().get("file:///" + smallTableHtmlFile);
-        assertTrue(TableUtility.waitForTableToBecomeVisible(5));
+        TableUtility.waitForTableToBecomeVisible(5);
     }
 
     @AfterMethod

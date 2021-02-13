@@ -357,7 +357,7 @@ public class TableUtility {
 
     }
 
-    public static void waitForColumnValuesToBeUnique(String expectedUniqueValue, int timeoutInSeconds){
+    public static void waitForColumnValuesToEqual(String expectedValue, int timeoutInSeconds){
 
     }
 

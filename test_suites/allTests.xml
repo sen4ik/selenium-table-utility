@@ -4,7 +4,12 @@
 <suite name="selenium-table-util-test-suite" verbose="1" parallel="methods" thread-count="4">
     <test name="test-one">
         <classes>
-            <class name="SmallTableTest"></class>
+            <class name="SmallTableTest">
+                <methods>
+                    <exclude name="isTablePresent_negative"/>
+                    <exclude name="isTableVisible_negative"/>
+                </methods>
+            </class>
         </classes>
     </test>
 </suite>
