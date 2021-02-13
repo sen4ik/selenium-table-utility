@@ -10,6 +10,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.sen4ik.utils.ArrUtil;
 import org.sen4ik.utils.selenium.base.SeleniumUtils;
 import org.sen4ik.utils.selenium.utils.DriverUtil;
+import org.sen4ik.utils.selenium.utils.WaiterUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +54,10 @@ public class TableUtility {
     public static WebElement getTable() {
         table = getDriver().findElement(tableLocator);
         return table;
+    }
+
+    public static boolean waitForTableToBecomeVisible(int timeOutInSeconds) {
+        return WaiterUtil.waitForElementToBecomeVisible(tableLocator, timeOutInSeconds);
     }
 
     public static boolean isTablePresent() {
@@ -339,7 +344,16 @@ public class TableUtility {
         return waitForChange(TableUtility::getColumnCount, timeoutInSeconds);
     }
 
-    public static void areColumnValuesUnique(String columnName){
+    public static boolean areColumnValuesUnique(String columnName){
+        return areColumnValuesUnique(getHeaderIndex(columnName));
+    }
+
+    public static boolean areColumnValuesUnique(int columnIndex){
+        List<String> columnValues = getColumnText(columnIndex);
+        return ArrUtil.arrayToUniqueList((ArrayList<String>) columnValues).size() == 1;
+    }
+
+    public static void waitForColumnValuesToBeUnique(int timeoutInSeconds){
 
     }
 

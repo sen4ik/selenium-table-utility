@@ -48,3 +48,10 @@ async function removeHeader() {
         table.removeChild(thead);
     }
 }
+
+async function updateCellValue(cellIndex, value){
+    let rows = document.getElementById(tableId).getElementsByTagName("TBODY")[0].rows;
+    for (let i = 0; i < rows.length; i++) {
+        rows[i].cells[cellIndex].innerHTML = value;
+    }
+}

@@ -53,6 +53,7 @@ public class SmallTableTest {
         DriverManager.createInstance();
         TableUtility.init(DriverManager::getDriver, testTable);
         DriverManager.getDriver().get("file:///" + smallTableHtmlFile);
+        assertTrue(TableUtility.waitForTableToBecomeVisible(5));
     }
 
     @AfterMethod
@@ -381,6 +382,18 @@ public class SmallTableTest {
     public void waitForNumberOfColumnsToChange_negative(){
         assertFalse(TableUtility.waitForNumberOfColumnsToChange(2));
     }
+
+    @Test
+    public void areColumnValuesUnique(){
+        DriverManager.getDriver().findElement(By.id("updateCellValue")).click();
+        assertTrue(TableUtility.areColumnValuesUnique(2));
+    }
+
+    @Test
+    public void areColumnValuesUnique_negative(){
+        assertFalse(TableUtility.areColumnValuesUnique(0));
+    }
+
 
 
 
