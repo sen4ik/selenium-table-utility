@@ -394,11 +394,6 @@ public class SmallTableTest {
         assertFalse(TableUtility.areColumnValuesUnique(0));
     }
 
-
-
-
-
-
     private void clickRemoveRowButton(){
         DriverManager.getDriver().findElement(By.id("removeRow")).click();
     }
