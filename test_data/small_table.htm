@@ -2,50 +2,12 @@
 <html>
 <head>
 <title>Small Table</title>
-<script>
-    var tableId = "mainTable";
-
-	document.onreadystatechange = () => {
-	  if (document.readyState === 'complete') {
-	      // https://patdavid.net/2019/02/displaying-a-big-html-table/
-	  	  console.log("complete");
-		  document.getElementById(tableId).style.display = "table";
-	  }
-	};
-
-    async function removeLastColumn() {
-        var rows = document.getElementById(tableId).rows;
-        // console.log(rows.length);
-        // console.log(rows);
-
-        await new Promise(resolve => setTimeout(resolve, 3000));
-
-        for (var i = 0; i < rows.length; i++) {
-            // var row = rows[i];
-            // console.log("row index", i);
-            for (var c = 0; c < rows[i].cells.length; c++) {
-                // var cell = rows[i].cells[c];
-                // console.log("cell index", c);
-                if(c == rows[i].cells.length-1){
-                    // console.log("last cell");
-                    rows[i].deleteCell(c);
-                }
-            }
-        }
-    }
-
-    async function removeFirstColumn() {
-        var rows = document.getElementById(tableId).rows;
-        await new Promise(resolve => setTimeout(resolve, 3000));
-        for (var i = 0; i < rows.length; i++) {
-            rows[i].deleteCell(0);
-        }
-    }
-</script>
+<script src="sc.js"></script>
 </head>
 <body>
 <button id="removeFirst" onclick="removeFirstColumn()">Remove The First Column</button>
 <button id="removeLast" onclick="removeLastColumn()">Remove The Last Column</button>
+<button id="removeRow" onclick="removeFirstRow()">Remove The First Row</button>
 <!-- dataset is taken from https://ardf.wr.usgs.gov/index.php -->
 <table id="mainTable" style="display: none">
 <thead>

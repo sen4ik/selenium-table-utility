@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Requested Products POC</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+	<script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.css" rel="stylesheet">
+	<link href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+	<style type="text/css">
+		thead input { width: 100%; }
+	    .ww20{ width:20px; }
+	    .ww40{ width:40px; }
+	    .ww60{ width:60px; }
+	    .ww80{ width:80px; }
+	    .ww100{ width:100px; }
+	    .ww120{ width:120px; }
+	    .ww140{ width:140px; }
+	    .ww160{ width:160px; }
+	    .ww180{ width:180px; }
+	    a.ordered { text-decoration: underline; }
+		a.ordered:hover, a.ordered:focus { text-decoration: none; }
+		.big-checkbox {width: 20px; height: 20px;}
+	</style>
+	<script type="text/javascript">
+		$(document).ready(function() {
+		    // Setup - add a text input to each footer cell
+		    $('#example thead tr').clone(true).appendTo( '#example thead' );
+		    $('#example thead tr:eq(1) th').each( function (i) {
+		        var title = $(this).text();
+		        $(this).html( '<input class="form-control" type="text" />' );
+		 		// $(this).html( '<input type="text" placeholder="Filter '+title+'" />' );
+		        $( 'input', this ).on( 'keyup change', function () {
+		            if ( table.column(i).search() !== this.value ) {
+		                table
+		                    .column(i)
+		                    .search( this.value )
+		                    .draw();
+		            }
+		        } );
+		    } );
+
+		    var table = $('#example').DataTable({
+		        orderCellsTop: true,
+		        fixedHeader: true,
+		        initComplete: function () {
+		            this.api().columns().every( function () {
+		                var column = this;
+
+						var columnIndex = column[0][0];
+		                var skipColumns = [0, 1, 2, 4, 5, 6, 7, 10, 11];
+		                if(!skipColumns.includes(columnIndex)){
+							// console.log(columnIndex)
+
+							var select = $('<select class="custom-select"><option value=""></option></select>')
+		                    .appendTo( $(column.footer()).empty() )
+		                    .on( 'change', function () {
+		                        var val = $.fn.dataTable.util.escapeRegex(
+		                            $(this).val()
+		                        );
+
+		                        column
+		                            .search( val ? '^'+val+'$' : '', true, false )
+		                            .draw();
+		                    });
+
+							column.data().unique().sort().each( function ( d, j ) {
+
+								// ugly one second fix
+								if(d.includes("ordered") && d.includes("class")){
+									var html = $.parseHTML(d);
+									d = $(html).text();
+								}
+
+			                    select.append( '<option value="'+d+'">'+d+'</option>' )
+			                });
+
+			                $('#example thead').find("tr:eq(1)").find("th:eq("+columnIndex+")").html(select);
+		                }
+		            });
+		        }
+		    });
+
+		    var getColor = function(text) {
+			  if (text === "Completed" ||
+			  	  text === "Requested" ||
+			  	  text === "Approved") return 'green';
+			  if (text === "In Progress" ||
+			  	  text === "Approval Needed" ||
+			  	  text === "Approval Requested") return 'orange';
+			  if (text === "Rejected") return 'red';
+			  return "";
+			};
+
+			$('#example tbody td').each(function(i, td) {
+			  var color = getColor($(td).html());
+			  $(td).css({
+			    "color": color
+			  });
+			});
+
+			table.columns().every( function ( index ) {
+			    var column = table.column( index );
+				var columnIndex = column[0][0];
+				// console.log("columnIndex: " + columnIndex);
+
+				if(columnIndex === 7){
+					var vendors = $('<select class="custom-select"><option value=""></option></select>')
+	                    .on( 'change', function () {
+	                        var val = $.fn.dataTable.util.escapeRegex(
+	                            $(this).val()
+	                        );
+	                        // console.log(val)
+
+	                        column
+	                            .search( val ? '^'+val+'$' : '', true, false )
+	                            .draw();
+	                    });
+				    vendors.append( '<option>M&A Parts</option>' )
+					vendors.append( '<option>V Auto Parts</option>' )
+					vendors.append( '<option>Green Parts Supplies</option>' )
+					vendors.append( '<option>Fun Boys Parts</option>' )
+					$('#example thead').find("tr:eq(1)").find("th:eq("+columnIndex+")").html(vendors);
+				}
+			    // var data = column.data();
+			});
+
+		    $('#example thead').find("tr:eq(1)").find("th:eq(0)").html("");
+		});
+	</script>
+</head>
+<body class="m-5">
+	<table id="example" class="table table-striped table-bordered" style="width:100%">
+        <thead>
+            <tr>
+            	<th></th>
+                <th>ID</th>
+                <th>Requested Product</th>
+                <th>Product Status</th>
+                <th>Item Cost</th>
+                <th>Quantity</th>
+                <th>Total Cost</th>
+                <th>Vendor</th>
+                <th>Requestor</th>
+                <th>Assignee</th>
+                <th>Repair Order</th>
+                <th>Request ID</th>
+                <th>Request Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="ww20">
+                	<input type="checkbox" class="big-checkbox" name="">
+                </td>
+                <td>5010</td>
+                <td><a href="https://www.google.com/search?q=Toyo+Tire+180x22+R16">Toyo Tire 180x22 R16</a></td>
+                <td>Requested</td>
+                <td>
+                	<input type="text" name="" value="2.99" class="ww100 form-control">
+                </td>
+                <td>
+                	<input type="text" name="" value="2" class="ww80 form-control">
+                </td>
+                <td>
+                	<input type="text" name="" value="4.98" class="ww100 form-control">
+                </td>
+                <td>
+                	<select class="custom-select ww160">
+					  <option>M&A Parts</option>
+					  <option selected value="1">V Auto Parts</option>
+					  <option value="2">Green Parts Supplies</option>
+					  <option value="3">Fun Boys Parts</option>
+					</select>
+            	</td>
+                <td>Peter W.</td>
+                <td>Tony H.</td>
+                <td>14000</td>
+                <td>3001</td>
+                <td>In Progress</td>
+            </tr>
+            <tr>
+                <td>
+                	<input type="checkbox" class="big-checkbox" name="">
+                </td>
+                <td>5009</td>
+                <td>Green Parts Supplies ECU Module RE#9823</td>
+                <td>Approved</td>
+                <td>
+                	<input type="text" name="" value="" class="ww100 form-control">
+                </td>
+                <td>
+                	<input type="text" name="" value="" class="ww80 form-control">
+                </td>
+                <td>
+                	<input type="text" name="" value="" class="ww100 form-control">
+                </td>
+                <td>
+                	<select class="custom-select">
+					  <option>M&A Parts</option>
+					  <option selected value="1">V Auto Parts</option>
+					  <option value="2">Green Parts Supplies</option>
+					  <option value="3">Fun Boys Parts</option>
+					</select>
+            	</td>
+                <td>Peter W.</td>
+                <td>Tony H.</td>
+                <td>14000</td>
+                <td>3001</td>
+                <td>In Progress</td>
+            </tr>
+            <tr>
+                <td>
+                	<input type="checkbox" class="big-checkbox" disabled name="">
+                </td>
+                <td>5008</td>
+                <td>Something expensive</td>
+                <td>Rejected</td>
+                <td>
+                	<input type="text" disabled name="" value="1523.22" class="ww100 form-control">
+                </td>
+                <td>
+                	<input type="text" disabled name="" value="1" class="ww80 form-control">
+                </td>
+                <td>
+                	<input type="text" disabled name="" value="1523.22" class="ww100 form-control">
+                </td>
+                <td>
+                	<select class="custom-select">
+					  <option>M&A Parts</option>
+					  <option selected value="1">V Auto Parts</option>
+					  <option value="2">Green Parts Supplies</option>
+					  <option value="3">Fun Boys Parts</option>
+					</select>
+            	</td>
+                <td>Bob W.</td>
+                <td>John B.</td>
+                <td>12834</td>
+                <td>3012</td>
+                <td>Completed</td>
+            </tr>
+            <tr>
+                <td>
+                	<input type="checkbox" class="big-checkbox" disabled name="">
+                </td>
+                <td>5007</td>
+                <td>Some important part</td>
+                <td>Approval Needed</td>
+                <td>
+                	<input type="text" name="" value="" class="ww100 form-control">
+                </td>
+                <td>
+                	<input type="text" name="" value="" class="ww80 form-control">
+                </td>
+                <td>
+                	<input type="text" name="" value="" class="ww100 form-control">
+                </td>
+                <td>
+                	<select class="custom-select">
+					  <option>M&A Parts</option>
+					  <option selected value="1">V Auto Parts</option>
+					  <option value="2">Green Parts Supplies</option>
+					  <option value="3">Fun Boys Parts</option>
+					</select>
+            	</td>
+                <td>Bob W.</td>
+                <td>John B.</td>
+                <td>12834</td>
+                <td>3029</td>
+                <td>In Progress</td>
+            </tr>
+            <tr>
+                <td>
+                	<input type="checkbox" class="big-checkbox" disabled name="">
+                </td>
+                <td>5006</td>
+                <td>Bumper</td>
+                <td>Approval Requested</td>
+                <td>
+                	<input type="text" name="" value="" class="ww100 form-control">
+                </td>
+                <td>
+                	<input type="text" name="" value="" class="ww80 form-control">
+                </td>
+                <td>
+                	<input type="text" name="" value="" class="ww100 form-control">
+                </td>
+                <td>
+                	<select class="custom-select">
+					  <option>M&A Parts</option>
+					  <option selected value="1">V Auto Parts</option>
+					  <option value="2">Green Parts Supplies</option>
+					  <option value="3">Fun Boys Parts</option>
+					</select>
+            	</td>
+                <td>Bob W.</td>
+                <td>John B.</td>
+                <td>12834</td>
+                <td>3032</td>
+                <td>In Progress</td>
+            </tr>
+            <tr>
+                <td>
+                	<input type="checkbox" class="big-checkbox" disabled name="">
+                </td>
+                <td>5005</td>
+                <td>Fog lights</td>
+                <td>
+                	Ordered
+                </td>
+                <td>
+                	<input type="text" disabled name="" value="100.00" class="ww100 form-control">
+                </td>
+                <td>
+                	<input type="text" disabled name="" value="1" class="ww80 form-control">
+                </td>
+                <td>
+                	<input type="text" disabled name="" value="100.00" class="ww100 form-control">
+                </td>
+                <td>
+                	<select class="custom-select">
+					  <option selected>M&A Parts</option>
+					  <option value="1">V Auto Parts</option>
+					  <option value="2">Green Parts Supplies</option>
+					  <option value="3">Fun Boys Parts</option>
+					</select>
+            	</td>
+                <td>Peter W.</td>
+                <td>Mark O.</td>
+                <td>11928</td>
+                <td>3092</td>
+                <td>Completed</td>
+            </tr>
+            <tr>
+                <td>
+                	<input type="checkbox" class="big-checkbox" name="">
+                </td>
+                <td>5004</td>
+                <td>V12 #489234 Diesel Engine</td>
+                <td>Requested</td>
+                <td>
+                	<input type="text" name="" value="" class="ww100 form-control">
+                </td>
+                <td>
+                	<input type="text" name="" value="" class="ww80 form-control">
+                </td>
+                <td>
+                	<input type="text" name="" value="" class="ww100 form-control">
+                </td>
+                <td>
+                	<select class="custom-select">
+                	  <option>M&A Parts</option>
+					  <option selected></option>
+					  <option value="1">V Auto Parts</option>
+					  <option value="2">Green Parts Supplies</option>
+					  <option value="3">Fun Boys Parts</option>
+					</select>
+            	</td>
+                <td>Peter W.</td>
+                <td>Tony H.</td>
+                <td>19222</td>
+                <td>2067</td>
+                <td>In Progress</td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="checkbox" class="big-checkbox" name="">
+                </td>
+                <td>5003</td>
+                <td>Honda Accord 2015 EX driver side front fender</td>
+                <td>Requested</td>
+                <td>
+                    <input type="text" name="" value="" class="ww100 form-control">
+                </td>
+                <td>
+                    <input type="text" name="" value="" class="ww80 form-control">
+                </td>
+                <td>
+                    <input type="text" name="" value="" class="ww100 form-control">
+                </td>
+                <td>
+                    <select class="custom-select">
+                        <option>M&A Parts</option>
+                        <option selected></option>
+                        <option value="1">V Auto Parts</option>
+                        <option value="2">Green Parts Supplies</option>
+                        <option value="3">Fun Boys Parts</option>
+                    </select>
+                </td>
+                <td>Peter W.</td>
+                <td>John B.</td>
+                <td>17823</td>
+                <td>3002</td>
+                <td>In Progress</td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="checkbox" class="big-checkbox" name="">
+                </td>
+                <td>5002</td>
+                <td>Honda Pilot 2015 EX fog lights</td>
+                <td>Requested</td>
+                <td>
+                    <input type="text" name="" value="" class="ww100 form-control">
+                </td>
+                <td>
+                    <input type="text" name="" value="" class="ww80 form-control">
+                </td>
+                <td>
+                    <input type="text" name="" value="" class="ww100 form-control">
+                </td>
+                <td>
+                    <select class="custom-select">
+                        <option>M&A Parts</option>
+                        <option selected></option>
+                        <option value="1">V Auto Parts</option>
+                        <option value="2">Green Parts Supplies</option>
+                        <option value="3">Fun Boys Parts</option>
+                    </select>
+                </td>
+                <td>Peter W.</td>
+                <td>John B.</td>
+                <td>17822</td>
+                <td>3002</td>
+                <td>In Progress</td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="checkbox" class="big-checkbox" name="">
+                </td>
+                <td>5001</td>
+                <td>Honda Pilot 2015 EX front bumper</td>
+                <td>Requested</td>
+                <td>
+                    <input type="text" name="" value="" class="ww100 form-control">
+                </td>
+                <td>
+                    <input type="text" name="" value="" class="ww80 form-control">
+                </td>
+                <td>
+                    <input type="text" name="" value="" class="ww100 form-control">
+                </td>
+                <td>
+                    <select class="custom-select">
+                        <option>M&A Parts</option>
+                        <option selected></option>
+                        <option value="1">V Auto Parts</option>
+                        <option value="2">Green Parts Supplies</option>
+                        <option value="3">Fun Boys Parts</option>
+                    </select>
+                </td>
+                <td>Peter W.</td>
+                <td>Tony H.</td>
+                <td>17821</td>
+                <td>3002</td>
+                <td>In Progress</td>
+            </tr>
+        </tbody>
+        <tfoot class="d-none">
+            <tr>
+                <th></th>
+                <th>ID</th>
+                <th>Requested Product</th>
+                <th>Product Status</th>
+                <th>Item Cost</th>
+                <th>Quantity</th>
+                <th>Total Cost</th>
+                <th>Vendor</th>
+                <th>Requestor</th>
+                <th>Assignee</th>
+                <th>Repair Order</th>
+                <th>Request ID</th>
+                <th>Request Status</th>
+            </tr>
+        </tfoot>
+    </table>
+	</br>
+</body>
+</html>
